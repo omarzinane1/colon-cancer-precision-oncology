@@ -11,7 +11,28 @@ Le modele utilise une Logistic Regression avec uniquement 6 genes selectionnes :
 - H66976
 - X55362
 
-> Important : le dataset fourni est synthetique et sert a rendre le projet directement executable pour une demonstration. Il ne doit pas etre utilise comme outil medical.
+> Important : ce projet est une demonstration pedagogique. Il ne doit pas etre utilise comme outil de diagnostic medical final.
+
+## Dataset
+
+Le fichier utilise est :
+
+```text
+data/colon_cancer.csv
+```
+
+Le CSV contient de nombreuses colonnes de genes. La colonne cible du dataset est :
+
+```text
+Class
+```
+
+Les classes predites sont :
+
+- Normal
+- Abnormal
+
+Le pipeline ne garde que les 6 genes selectionnes afin de construire un modele simple, interpretable et facile a presenter.
 
 ## Architecture
 
@@ -42,22 +63,24 @@ colon_cancer_precision_oncology/
 ## Pipeline
 
 ```text
-Dataset -> Pretraitement -> StandardScaler -> LogisticRegression -> Sauvegarde modele -> Flask prediction
+Dataset -> Selection des 6 genes -> Class -> StandardScaler -> LogisticRegression -> Sauvegarde modele -> Flask prediction
 ```
 
-1. Le fichier `data/colon_cancer.csv` contient les 6 genes et le label `normal` ou `cancer`.
-2. Le script d'entrainement encode les labels avec `LabelEncoder`.
-3. Les valeurs genetiques sont standardisees avec `StandardScaler`.
-4. Le modele `LogisticRegression` est entraine et evalue.
-5. Les fichiers `model.pkl`, `scaler.pkl` et `label_encoder.pkl` sont sauvegardes dans `models/`.
-6. L'application Flask charge ces fichiers et expose un formulaire web de prediction.
+1. Le fichier `data/colon_cancer.csv` contient plusieurs colonnes de genes et la colonne cible `Class`.
+2. Le script d'entrainement selectionne les 6 genes utilises comme features.
+3. La colonne `Class` contient les classes `Normal` et `Abnormal`.
+4. Les classes sont encodees avec `LabelEncoder`.
+5. Les valeurs genetiques sont standardisees avec `StandardScaler`.
+6. Le modele `LogisticRegression` est entraine et evalue.
+7. Les fichiers `model.pkl`, `scaler.pkl` et `label_encoder.pkl` sont sauvegardes dans `models/`.
+8. L'application Flask charge ces fichiers et expose un formulaire web de prediction.
 
 ## Lancer Jupyter
 
 Depuis le dossier `colon_cancer_precision_oncology/` :
 
 ```bash
-docker-compose up jupyter
+docker compose up jupyter
 ```
 
 Puis ouvrir :
@@ -75,7 +98,7 @@ notebooks/logistic_regression_analysis.ipynb
 ## Entrainer le modele
 
 ```bash
-docker-compose up --build train
+docker compose up --build train
 ```
 
 Cette commande cree les fichiers suivants :
@@ -89,7 +112,7 @@ models/label_encoder.pkl
 ## Lancer l'application Flask
 
 ```bash
-docker-compose up --build deploy
+docker compose up --build deploy
 ```
 
 Puis ouvrir :
@@ -107,31 +130,31 @@ Model not found. Please run the training service first.
 ## Tout lancer
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 Le service `deploy` depend du service `train`, afin que l'entrainement soit lance avant l'application web.
 
 ## Exemple de valeurs a tester
 
-Prediction attendue proche de `normal` :
+Exemple issu du dataset, prediction attendue proche de `Abnormal` :
 
 ```text
-M63391=5.10
-T62947=6.24
-D14812=4.02
-T51250=7.12
-H66976=2.80
-X55362=4.60
+M63391=552.65875
+T62947=74.5325
+D14812=438.24625
+T51250=512.1238
+H66976=115.395
+X55362=315.52374
 ```
 
-Prediction attendue proche de `cancer` :
+Exemple issu du dataset, prediction attendue proche de `Normal` :
 
 ```text
-M63391=8.14
-T62947=3.12
-D14812=7.38
-T51250=4.16
-H66976=7.52
-X55362=8.63
+M63391=2314.9487
+T62947=66.07
+D14812=589.72375
+T51250=946.5588
+H66976=283.4325
+X55362=379.9875
 ```

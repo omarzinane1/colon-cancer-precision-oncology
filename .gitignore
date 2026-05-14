@@ -1,0 +1,44 @@
+# Data files
+data/*
+*.csv
+*.xlsx
+*.xls
+*.tsv
+
+# Keep data folder structure if placeholder files exist
+!data/.gitkeep
+
+# Trained models and generated artifacts
+models/*
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.pth
+*.onnx
+
+# Keep models folder structure if placeholder files exist
+!models/.gitkeep
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment variables
+.env
+.env.local
+
+# Docker/local overrides and logs
+*.log
+docker-compose.override.yml
+
+# OS/IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 
 FEATURE_COLUMNS = ["M63391", "T62947", "D14812", "T51250", "H66976", "X55362"]
-TARGET_COLUMN_CANDIDATES = ["Class", "label", "target", "diagnosis"]
+TARGET_COLUMN_CANDIDATES = ["Class"]
 
 
 def find_project_file(relative_path: str) -> Path:
