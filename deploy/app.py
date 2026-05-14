@@ -58,6 +58,7 @@ def load_artifacts() -> tuple[bool, str | None]:
 def index():
     prediction = None
     probability = None
+    result_type = None
     error = None
     values = {gene: "" for gene in FEATURE_COLUMNS}
 
@@ -81,6 +82,7 @@ def index():
 
                 prediction = ARTIFACTS["label_encoder"].inverse_transform([encoded_prediction])[0]
                 probability = round(float(probabilities.max()) * 100, 2)
+                result_type = "danger" if prediction.lower() == "abnormal" else "success"
             except ValueError:
                 error = "Please enter valid numeric values for all genes."
             except Exception as exc:
@@ -92,6 +94,7 @@ def index():
         values=values,
         prediction=prediction,
         probability=probability,
+        result_type=result_type,
         error=error,
     )
 

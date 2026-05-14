@@ -42,7 +42,7 @@
             </form>
 
             {% if prediction %}
-                <section class="result">
+                <section class="result {{ result_type }}">
                     <p class="result-label">Predicted class</p>
                     <h2>{{ prediction }}</h2>
                     <p class="probability">Probability: {{ probability }}%</p>

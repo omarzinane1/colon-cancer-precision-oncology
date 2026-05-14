@@ -137,9 +137,17 @@ button:hover {
 .result {
     margin-top: 26px;
     padding: 20px;
-    background: var(--success-bg);
-    border: 1px solid #bbf7d0;
     border-radius: 8px;
+}
+
+.result.success {
+    background: #e8f8ef;
+    border: 1px solid #9be7b0;
+}
+
+.result.danger {
+    background: #fdecec;
+    border: 1px solid #f5a3a3;
 }
 
 .result-label {
@@ -152,6 +160,14 @@ button:hover {
 .result h2 {
     margin-bottom: 6px;
     text-transform: capitalize;
+}
+
+.result.success h2 {
+    color: #0f7a3b;
+}
+
+.result.danger h2 {
+    color: #b00020;
 }
 
 .probability {
