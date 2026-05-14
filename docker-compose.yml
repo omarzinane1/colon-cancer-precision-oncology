@@ -1,0 +1,30 @@
+services:
+  jupyter:
+    image: jupyter/scipy-notebook:python-3.11
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./data:/home/jovyan/work/data
+      - ./notebooks:/home/jovyan/work/notebooks
+      - ./models:/home/jovyan/work/models
+    command: start-notebook.py --ServerApp.token='' --ServerApp.password=''
+
+  train:
+    build:
+      context: ./train
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    command: python train.py
+
+  deploy:
+    build:
+      context: ./deploy
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./models:/app/models
+    depends_on:
+      train:
+        condition: service_completed_successfully
+    command: python app.py

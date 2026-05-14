@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Colon Cancer Precision Oncology</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="page">
+        <section class="panel">
+            <div class="header">
+                <p class="eyebrow">Precision Oncology</p>
+                <h1>Colon Cancer Classifier</h1>
+                <p class="subtitle">Logistic Regression prediction from six gene expression values.</p>
+            </div>
+
+            {% if error %}
+                <div class="alert">{{ error }}</div>
+            {% endif %}
+
+            <form method="post" class="gene-form">
+                <div class="grid">
+                    {% for gene in features %}
+                        <label class="field" for="{{ gene }}">
+                            <span>{{ gene }}</span>
+                            <input
+                                id="{{ gene }}"
+                                name="{{ gene }}"
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value="{{ values[gene] }}"
+                                placeholder="0.00"
+                                required
+                            >
+                        </label>
+                    {% endfor %}
+                </div>
+
+                <button type="submit">Predict</button>
+            </form>
+
+            {% if prediction %}
+                <section class="result">
+                    <p class="result-label">Predicted class</p>
+                    <h2>{{ prediction }}</h2>
+                    <p class="probability">Probability: {{ probability }}%</p>
+                </section>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
