@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 
 FEATURE_COLUMNS = ["M63391", "T62947", "D14812", "T51250", "H66976", "X55362"]
-LABEL_COLUMN = "label"
+TARGET_COLUMN_CANDIDATES = ["Class", "label", "target", "diagnosis"]
 
 
 def find_project_file(relative_path: str) -> Path:
@@ -36,6 +36,21 @@ def find_models_dir() -> Path:
     return Path.cwd() / "models"
 
 
+def print_available_columns(df: pd.DataFrame) -> None:
+    print("\nAvailable columns:")
+    print(f"Total columns: {len(df.columns)}")
+    for index, column in enumerate(df.columns, start=1):
+        print(f"  {index}. {column}")
+
+
+def detect_target_column(df: pd.DataFrame) -> str | None:
+    for column in TARGET_COLUMN_CANDIDATES:
+        if column in df.columns:
+            return column
+
+    return None
+
+
 def main() -> None:
     data_path = find_project_file("data/colon_cancer.csv")
     models_dir = find_models_dir()
@@ -51,17 +66,28 @@ def main() -> None:
     df = pd.read_csv(data_path)
     print(f"\nDataset shape: {df.shape[0]} rows, {df.shape[1]} columns")
 
-    required_columns = FEATURE_COLUMNS + [LABEL_COLUMN]
-    missing_columns = [column for column in required_columns if column not in df.columns]
-    if missing_columns:
-        raise ValueError(f"Missing required columns: {missing_columns}")
+    missing_genes = [gene for gene in FEATURE_COLUMNS if gene not in df.columns]
+    target_column = detect_target_column(df)
+
+    if missing_genes:
+        print_available_columns(df)
+        raise ValueError(f"Missing selected gene columns: {missing_genes}")
+
+    if target_column is None:
+        print_available_columns(df)
+        raise ValueError(
+            "Missing target column. Expected one of: "
+            f"{', '.join(TARGET_COLUMN_CANDIDATES)}"
+        )
 
     print("Required gene columns found:")
     for gene in FEATURE_COLUMNS:
         print(f"  - {gene}")
 
+    print(f"Target column found: {target_column}")
+
     X = df[FEATURE_COLUMNS]
-    y = df[LABEL_COLUMN]
+    y = df[target_column]
 
     label_encoder = LabelEncoder()
     y_encoded = label_encoder.fit_transform(y)
