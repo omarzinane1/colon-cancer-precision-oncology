@@ -2,7 +2,7 @@
 
 Projet Data Science + DevOps simple pour classifier l'etat d'un patient a partir de donnees d'expression genetique du cancer du colon.
 
-Le modele utilise une Logistic Regression avec uniquement 6 genes selectionnes :
+Le modele utilise une Logistic Regression avec uniquement 6 genes d'expression genetique :
 
 - M63391
 - T62947
@@ -34,6 +34,41 @@ Les classes predites sont :
 
 Le pipeline ne garde que les 6 genes selectionnes afin de construire un modele simple, interpretable et facile a presenter.
 
+## Selection des genes
+
+Le dataset contient beaucoup plus de genes que d'echantillons. Une selection de variables est donc utile pour reduire la dimension, limiter la complexite du modele et garder une application Flask simple avec seulement 6 valeurs a saisir.
+
+Dans la version initiale du projet, les 6 genes etaient definis manuellement dans le notebook, `train/train.py` et `deploy/app.py` :
+
+- M63391
+- T62947
+- D14812
+- T51250
+- H66976
+- X55362
+
+Une verification a ete ajoutee dans le notebook avec Sequential Forward Selection (SFS). SFS commence sans variable, ajoute a chaque etape le gene qui ameliore le plus l'accuracy en validation croisee, et s'arrete ici apres avoir selectionne exactement 6 genes.
+
+SFS a selectionne :
+
+- R02593
+- T55131
+- H20709
+- T63508
+- M63391
+- D00749
+
+Comparaison sur le meme split train/test stratifie :
+
+- Accuracy avec les 6 genes manuels : `0.9231`
+- Accuracy avec les 6 genes SFS : `0.7692`
+
+Comme SFS a choisi des genes differents mais n'a pas ameliore l'accuracy, le projet final conserve les 6 genes manuellement predefinis. Le notebook documente cette comparaison et montre le code SFS complet.
+
+Ce projet utilise une selection de variables, pas PCA. SFS garde des genes originaux du dataset, ce qui rend le modele plus interpretable. PCA creerait de nouvelles composantes transformees, moins directes a expliquer dans ce contexte medical pedagogique.
+
+Aucune affirmation biologique ou clinique n'est faite sur ces genes.
+
 ## Architecture
 
 ```text
@@ -63,11 +98,11 @@ colon_cancer_precision_oncology/
 ## Pipeline
 
 ```text
-Dataset -> Selection des 6 genes -> Class -> StandardScaler -> LogisticRegression -> Sauvegarde modele -> Flask prediction
+Dataset -> Selection/conservation des 6 genes -> Class -> StandardScaler -> LogisticRegression -> Sauvegarde modele -> Flask prediction
 ```
 
 1. Le fichier `data/colon_cancer.csv` contient plusieurs colonnes de genes et la colonne cible `Class`.
-2. Le script d'entrainement selectionne les 6 genes utilises comme features.
+2. Le script d'entrainement conserve les 6 genes finaux utilises comme features.
 3. La colonne `Class` contient les classes `Normal` et `Abnormal`.
 4. Les classes sont encodees avec `LabelEncoder`.
 5. Les valeurs genetiques sont standardisees avec `StandardScaler`.
